@@ -1,0 +1,41 @@
+#build 
+sudo docker build -t pg-eleicoes .
+
+#run
+sudo docker run -it -d -v /home/vmvini/Dropbox/ADS/SEXTO_PERIODO/POS/projetos/projeto1/dados/prestacao_contas_2002/2002/Candidato/Receita:/var/dados pg-eleicoes
+
+
+#selecionar banco
+psql -U postgres eleicoes
+
+#copy from csv specifying columns
+\copy receita_candidato (x2,x5,x7,x10) FROM '/var/dados/ReceitaCandidato.csv' DELIMITER ';' CSV;
+
+#or
+COPY receita_candidato FROM '/var/dados/ReceitaCandidato.csv' ( FORMAT CSV, DELIMITER(';') );
+
+#or 
+copy receita_candidato from '/var/dados/ReceitaCandidato.csv' DELIMITER ';' csv header;
+
+#or
+#ESSE TA FUNCIONANDO
+#1- setar o estilo da data 
+;SET datestyle = 'ISO, DMY';
+#2- importar dados
+\COPY receita_candidato (SEQUENCIAL_CANDIDATO, SG_UF, SG_PART,DS_CARGO, NO_CAND, NR_CAND, DT_RECEITA, CD_CPF_CGC, SG_UF_DOADOR, NO_DOADOR, VR_RECEITA,  TP_RECURSO ) FROM '/var/dados/ReceitaCandidatoDecimalPointFix.csv' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
+
+
+
+#show database encoding 
+psql -U postgres eleicoes -c 'SHOW SERVER_ENCODING'
+#OR 
+;SHOW SERVER_ENCODING; 
+
+
+
+#check csv file encoding through linux bash
+file fileName.csv
+
+
+#TROCAR VIRGULA POR PONTO NOS NUMEROS
+sed s/','/'.'/g ReceitaCandidato.csv > ReceitaCandidatoDecimalPointFix.csv
