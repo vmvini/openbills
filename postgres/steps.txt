@@ -1,53 +1,35 @@
-#build 
+#Construir imagem
 sudo docker build -t pg-eleicoes .
 
-#run
+#rExecutar imagem criada
+sudo docker run -it -d -v SUA_PASTA_LOCAL_DE_DADOS:/var/dados pg-eleicoes
+#exemplo:
 sudo docker run -it -d -v /home/vmvini/Dropbox/ADS/SEXTO_PERIODO/POS/projetos/projeto1/dados:/var/dados pg-eleicoes
 
 
+#Usar o "terminal" da imagem criada:
+sudo docker exec -it CODIGO_DO_CONTAINER_EM_EXECUCAO /bin/bash
+
+#importe os arquivos csv para as tabelas do banco com o comando:
+node importer.js
+
+
+#Para visualizar o banco com os novos dados:
 #selecionar banco
 psql -U postgres eleicoes
 
-#copy from csv specifying columns
-\copy receita_candidato (x2,x5,x7,x10) FROM '/var/dados/ReceitaCandidato.csv' DELIMITER ';' CSV;
-
-#or
-COPY receita_candidato FROM '/var/dados/ReceitaCandidato.csv' ( FORMAT CSV, DELIMITER(';') );
-
-#or 
-copy receita_candidato from '/var/dados/ReceitaCandidato.csv' DELIMITER ';' csv header;
-
-#or
-#ESSE TA FUNCIONANDO
-#1- setar o estilo da data 
-;SET datestyle = 'ISO, DMY';
-#2- importar dados
-
-#IMPORTÃÇÃO DE CONSULTA_CAND
-
-\COPY consulta_cand FROM '/var/dados/candidatos/2002/consulta_cand_2002_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY consulta_cand FROM '/var/dados/candidatos/2004/consulta_cand_2004_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY consulta_cand FROM '/var/dados/candidatos/2006/consulta_cand_2006_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY consulta_cand FROM '/var/dados/candidatos/2008/consulta_cand_2008_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY consulta_cand FROM '/var/dados/candidatos/2010/consulta_cand_2010_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY consulta_cand FROM '/var/dados/candidatos/2012/consulta_cand_2012_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-
-
-#IMPORTAÇÃO DE BEM_CANDIDATO
-\COPY BEM_CANDIDATO FROM '/var/dados/bens_candidatos/2006/bem_candidato_2006_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY BEM_CANDIDATO FROM '/var/dados/bens_candidatos/2008/bem_candidato_2008_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY BEM_CANDIDATO FROM '/var/dados/bens_candidatos/2010/bem_candidato_2010_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY BEM_CANDIDATO FROM '/var/dados/bens_candidatos/2012/bem_candidato_2012_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY BEM_CANDIDATO FROM '/var/dados/bens_candidatos/2014/bem_candidato_2014_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
+#Com esse bash do psql, é possível fazer qualquer coisa que vc faria com a ferramenta pgAdmin.
 
 
 
+
+
+
+#----COMANDOS UTILITÁRIOS-------------
 #show database encoding 
 psql -U postgres eleicoes -c 'SHOW SERVER_ENCODING'
 #OR 
 ;SHOW SERVER_ENCODING; 
-
-
 
 #check csv file encoding through linux bash
 file fileName.csv
