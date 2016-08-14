@@ -2,7 +2,7 @@
 sudo docker build -t pg-eleicoes .
 
 #run
-sudo docker run -it -d -v /home/vmvini/Dropbox/ADS/SEXTO_PERIODO/POS/projetos/projeto1/dados/prestacao_contas_2002/2002/Candidato/Receita:/var/dados pg-eleicoes
+sudo docker run -it -d -v /home/vmvini/Dropbox/ADS/SEXTO_PERIODO/POS/projetos/projeto1/dados:/var/dados pg-eleicoes
 
 
 #selecionar banco
@@ -22,7 +22,23 @@ copy receita_candidato from '/var/dados/ReceitaCandidato.csv' DELIMITER ';' csv 
 #1- setar o estilo da data 
 ;SET datestyle = 'ISO, DMY';
 #2- importar dados
-\COPY receita_candidato (SEQUENCIAL_CANDIDATO, SG_UF, SG_PART,DS_CARGO, NO_CAND, NR_CAND, DT_RECEITA, CD_CPF_CGC, SG_UF_DOADOR, NO_DOADOR, VR_RECEITA,  TP_RECURSO ) FROM '/var/dados/ReceitaCandidatoDecimalPointFix.csv' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
+
+#IMPORTÃÇÃO DE CONSULTA_CAND
+
+\COPY consulta_cand FROM '/var/dados/candidatos/2002/consulta_cand_2002_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
+\COPY consulta_cand FROM '/var/dados/candidatos/2004/consulta_cand_2004_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
+\COPY consulta_cand FROM '/var/dados/candidatos/2006/consulta_cand_2006_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
+\COPY consulta_cand FROM '/var/dados/candidatos/2008/consulta_cand_2008_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
+\COPY consulta_cand FROM '/var/dados/candidatos/2010/consulta_cand_2010_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
+\COPY consulta_cand FROM '/var/dados/candidatos/2012/consulta_cand_2012_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
+
+
+#IMPORTAÇÃO DE BEM_CANDIDATO
+\COPY BEM_CANDIDATO FROM '/var/dados/bens_candidatos/2006/bem_candidato_2006_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
+\COPY BEM_CANDIDATO FROM '/var/dados/bens_candidatos/2008/bem_candidato_2008_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
+\COPY BEM_CANDIDATO FROM '/var/dados/bens_candidatos/2010/bem_candidato_2010_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
+\COPY BEM_CANDIDATO FROM '/var/dados/bens_candidatos/2012/bem_candidato_2012_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
+\COPY BEM_CANDIDATO FROM '/var/dados/bens_candidatos/2014/bem_candidato_2014_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
 
 
 

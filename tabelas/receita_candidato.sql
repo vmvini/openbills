@@ -19,9 +19,7 @@ create table receita_candidato(
 	CODIGO_TIPO_RECURSO int,
 	NOME_DOADOR varchar(200),
 	NUMERO_CPF_CGC_DOADOR  varchar(11),
-	SITUACAO_CADASTRAL varchar(20),
-
-	primary key (SEQUENCIAL_CANDIDATO)
+	SITUACAO_CADASTRAL varchar(20)
 
 );
 	
@@ -38,8 +36,6 @@ create table if not exists receita_candidato(
 	SG_UF_DOADOR varchar(2),
 	NO_DOADOR varchar(200),
 	VR_RECEITA float,
-	TP_RECURSO varchar(20),
-	id serial,
-	primary key (id)
+	TP_RECURSO varchar(20)
 
 );
