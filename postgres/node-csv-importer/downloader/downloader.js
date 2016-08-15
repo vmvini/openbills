@@ -15,6 +15,7 @@ foreach row
 
 	var fs = require('fs');
 	var http = require('http');
+	var unzipLib = require('unzip');
 
 	var stack = [];
 
@@ -126,9 +127,15 @@ foreach row
 							complete();
 						}
 						console.log("terminado");
-						
-
 					}
+
+					//unzip downloaded file
+					unzip(dest, path+"/", function(err){
+						if(err){
+							console.log("erro ao extrair " + dest);
+							console.log(err);
+						}
+					});
 					
 
 				});	
@@ -176,6 +183,23 @@ foreach row
 	    }
 	    return path;
 	}
+
+
+	function unzip(file, dest, callback){
+		fs.createReadStream(file).pipe(
+			
+			unzipLib.Extract({ path: dest })
+					.on('close', function(){
+						callback(null);
+					})
+					.on('error', function(err){
+						callback(err);
+					})
+
+		);
+					
+	}
+
 
 	
 
