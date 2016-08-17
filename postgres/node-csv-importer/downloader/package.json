@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "unzip": "^0.1.11"
+    "unzip": "^0.1.11",
+    "venqueuer": "^1.0.0"
   }
 }

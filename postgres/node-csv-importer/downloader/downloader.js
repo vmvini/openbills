@@ -1,77 +1,129 @@
-//downloads each link provided in datasource.txt and sends the files to /var/dados/
-
-/*
-read datasource
-foreach row
-	if(!isLink)
-		create folder with row content as name in /var/dados
-		add folderPath to stack
-	else
-		download from link and extract file to stack.pop() 
-
-*/
-
 (function(){
+
 
 	var fs = require('fs');
 	var http = require('http');
 	var unzipLib = require('unzip');
+	
+	var folderName;
 
-	var stack = [];
+	var vEnqueuer = require('venqueuer');
+
+	var venqueuer = new vEnqueuer();
 
 	var lineReader = require('readline').createInterface({
-	  input: fs.createReadStream('./datasource.txt')
+		input: fs.createReadStream('./datasource.txt')
 	});
+
+	venqueuer.createQueue("unzip", function(){
+		console.log("extração dos arquivos zipados acabou!");
+	});
+
+	venqueuer.createQueue("download", function(){
+		
+		console.log("Download dos arquivos acabou!");
+
+		venqueuer.trigger("unzip");
+
+	});	
+
+
 
 	lineReader.on('line', function (line) {
-	  var row = line.trim();
-	  if(isURL(row)){
-		stack.slice(-1).pop().enqueueDownload(row); 	
-	  }
-	  else if( !isEmpty(row) ){
-	  	stack.push( new DownloadManager( createFolderSync('./'+row) ) );
-	  	
-	  	/*createFolder('/var/data/' + row, function(path, err){
-	  		if(err){
-	  			console.log("erro ao criar " + path );
-	  			return;
-	  		}
-	  		stack.push( new DownloadManager(path) );
-	  	});*/
-	  }
+		var row = line.trim();
+		var finalDest = folderName + "/";
+		var filePath = folderName + "/" + getFileName(row);
+		if(isURL(row)){
+			
+
+			venqueuer.enqueue("download", download, {
+
+				url:row, 
+				dest:filePath,
+				callback:function(success, err){
+					if(success){
+						success();
+
+						venqueuer.enqueue("unzip", unzip, {
+							file: filePath,
+							dest: finalDest,
+							callback:function(fn, err){
+								if(fn){
+									fn();
+								}
+								if(err){
+									console.log("erro ao extrair " + filePath);
+									console.log(err);
+								}
+							}
+
+						});
+					}
+					if(err){
+						console.log("erro ao baixar arquivo");
+						console.log(err);
+					}
+				}
+
+			});
+
+			
+		}
+		else if( !isEmpty(row) ){
+			folderName = createFolderSync('./'+row);
+		}
 	});
+
 
 	lineReader.on('close', function(){
-		var busy = false;
-		var queue = [];
-		stack.forEach(function(d){
-
-			queue.push( new TaskSchedule(d) );
-			
-			if(busy === false){
-				busy = true;
-				queue.shift().execute();
-			}
-
-			function TaskSchedule(d){
-				this.execute = function(){
-					d.startDownload(function(){
-						busy = false; //complete callback
-						if(queue.length > 0){
-							busy = true;
-							queue.shift().execute();
-						}
-						
-					});
-				};
-			}
-
-		});
+		venqueuer.trigger("download");
 	});
 
+
+
+
+
+
+
+	function getFileName(url){
+		return url.substring(url.lastIndexOf('/')+1);
+	}
+
+
+
+
+	function download(url, dest, callback) {
+		var file = fs.createWriteStream(dest);
+		var request = http.get(url, function (response) {
+			response.pipe(file);
+			file.on('finish', function () {
+				
+				var fn = function(){
+					callback(function(){
+						console.log("download de " + url +  "acabou");
+						console.log("salvo em: " + dest);
+					});
+				};
+				file.close(fn); 
+
+			});
+			file.on('error', function (err) {
+				fs.unlink(dest);
+				if (callback)
+					callback(null, err.message);
+			});
+		});
+	}
 
 	function isEmpty(str){
 		return (str.length === 0 || !str.trim());
+	}
+
+	function createFolderSync(path){
+		if (!fs.existsSync(path)){
+			fs.mkdirSync(path);
+		}
+		return path;
 	}
 
 	function isURL(str) {
@@ -85,123 +137,27 @@ foreach row
 	}
 
 
-	function DownloadManager(path){
 
-		var queue = [];
-
-		this.startDownload = function(complete){
-			console.log("iniciando download de " + path);
-			if(queue.length > 0){
-				queue.shift().download(complete);
-			}
-		};
-
-		this.enqueueDownload = function(link){
-			console.log("enfileirando " + link);
-			queue.push( new Downloader( link ) );
-		};
-
-		function Downloader(link){
-
-			this.download = function(complete){
-				
-				var dest = path +"/"+ getFileName(link);
-				console.log(dest);
-				download(link, dest, function(err){
-					console.log("baixando " + link);
-					
-					if(err){
-						console.log("erro ao baixar o arquivo " + url);
-						console.log(err);
-					}
-
-					//download finished 
-					//call next 
-					if(queue.length > 0){
-						queue.shift().download();
-					}
-					else{
-						//all links downloaded
-						console.log("finalizado primeiro lote de downloads");
-						if(complete){
-							complete();
-						}
-						console.log("terminado");
-					}
-
-					//unzip downloaded file
-					unzip(dest, path+"/", function(err){
-						if(err){
-							console.log("erro ao extrair " + dest);
-							console.log(err);
-						}
-					});
-					
-
-				});	
-			};
-
-		}
-
-		function getFileName(url){
-			return url.substring(url.lastIndexOf('/')+1);
-		}
-
-		function download(url, dest, callback) {
-		    var file = fs.createWriteStream(dest);
-		    var request = http.get(url, function (response) {
-		        response.pipe(file);
-		        file.on('finish', function () {
-		            file.close(callback); 
-		        });
-		        file.on('error', function (err) {
-		            fs.unlink(dest);
-		            if (callback)
-		                callback(err.message);
-		        });
-		    });
-		}
-
-	}
-
-	function createFolder(path, mask, cb) {
-	    if (typeof mask == 'function') { // allow the `mask` parameter to be optional
-	        cb = mask;
-	        mask = 0777;
-	    }
-	    fs.mkdir(path, mask, function(err) {
-	        if (err) {
-	            if (err.code == 'EEXIST') cb(path, null); // ignore the error if the folder already exists
-	            else cb(path, err); // something else went wrong
-	        } else cb(path, null); // successfully created folder
-	    });
-	}
-
-	function createFolderSync(path){
-		if (!fs.existsSync(path)){
-	        fs.mkdirSync(path);
-	    }
-	    return path;
-	}
 
 
 	function unzip(file, dest, callback){
+		console.log("extraindo " + file);
 		fs.createReadStream(file).pipe(
 			
 			unzipLib.Extract({ path: dest })
-					.on('close', function(){
-						callback(null);
-					})
-					.on('error', function(err){
-						callback(err);
-					})
+			.on('close', function(){
+				callback(function(){
+					console.log("arumento funcionando");
+				}, null);
+			})
+			.on('error', function(err){
+				callback(null, err);
+			})
 
-		);
-					
+			);
+		
 	}
 
-
-	
 
 
 })();
