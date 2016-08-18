@@ -6,6 +6,7 @@
   "dependencies": {
     "pg": "^6.1.0",
     "pg-copy-streams": "^1.1.1",
+    "unzip": "^0.1.11",
     "venqueuer": "^1.0.0"
   },
   "devDependencies": {},
