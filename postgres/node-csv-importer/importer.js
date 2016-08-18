@@ -30,7 +30,7 @@ module.exports = function(){
 				console.log("terminou de importar dados no postgres");
 			});
 
-			var folders = getTopSubFolders('./downloader');
+			var folders = getTopSubFolders('./downloads');
 			var files;
 			var file;
 			var folder;

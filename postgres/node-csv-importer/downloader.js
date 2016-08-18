@@ -74,7 +74,7 @@
 			
 		}
 		else if( !isEmpty(row) ){
-			folderName = createFolderSync('./'+row);
+			folderName = createFolderSync('./downloads/'+row);
 		}
 	});
 
