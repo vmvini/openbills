@@ -17,6 +17,10 @@
 
 	venqueuer.createQueue("unzip", function(){
 		console.log("extração dos arquivos zipados acabou!");
+
+		console.log("enviar para postgres");
+		require('./importer');
+
 	});
 
 	venqueuer.createQueue("download", function(){
@@ -79,18 +83,9 @@
 		venqueuer.trigger("download");
 	});
 
-
-
-
-
-
-
 	function getFileName(url){
 		return url.substring(url.lastIndexOf('/')+1);
 	}
-
-
-
 
 	function download(url, dest, callback) {
 		var file = fs.createWriteStream(dest);
@@ -135,10 +130,6 @@
 	  '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
 	  return pattern.test(str);
 	}
-
-
-
-
 
 	function unzip(file, dest, callback){
 		console.log("extraindo " + file);

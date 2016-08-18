@@ -1,5 +1,5 @@
 //node-csv-importer
-(function(){
+module.exports = function(){
 
 
 	var fs = require('fs');
@@ -12,7 +12,7 @@
 	var client = new Client({user: 'postgres', database: 'eleicoes'});
 
 	client.connect(function(err, client, done) {
-		
+
 		if(err){
 			console.log("connection error", err);
 			return;
@@ -21,6 +21,8 @@
 			console.log("no client given");
 			return;
 		}
+
+		import();
 
 		function import(){
 
@@ -36,7 +38,7 @@
 			for (folder in folders){
 
 				files = getAllFilesUnderFolder(folder.path);
-				
+
 				for(file in files){
 					if(isValidFile(file)){
 						queueUpImportTask(file, folder.folderName);
@@ -47,7 +49,7 @@
 
 			venqueuer.trigger('importer');
 
-			
+
 			function isValidFile(f){
 				if( f.indexOf(".pdf") !== -1 )
 					return false;
@@ -59,7 +61,7 @@
 					return false;
 				if( f.indexOf(".zip") !== -1 )
 					return false;
-				
+
 				return true;
 			}
 
@@ -96,7 +98,7 @@
 		var fileStream = fs.createReadStream(filePath);
 		fileStream.on('error', error);
 		fileStream.pipe(stream).on('finish', complete).on('error', error);
-		
+
 		function error(e){
 			callback(e);
 		}
@@ -139,4 +141,4 @@
 	}
 
 
-})();
+};
