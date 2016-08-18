@@ -5,7 +5,8 @@
   "main": "importer.js",
   "dependencies": {
     "pg": "^6.1.0",
-    "pg-copy-streams": "^1.1.1"
+    "pg-copy-streams": "^1.1.1",
+    "venqueuer": "^1.0.0"
   },
   "devDependencies": {},
   "scripts": {

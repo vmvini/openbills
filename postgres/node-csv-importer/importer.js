@@ -1,161 +1,142 @@
 //node-csv-importer
-var fs = require('fs');
-var pg = require('pg');
-var Client = pg.Client;
-var copyFrom = require('pg-copy-streams').from;
-
-var client = new Client({user: 'postgres', database: 'eleicoes'});
-
-client.connect(function(err, client, done) {
-  
-  if(err){
-  	console.log("connection error", err);
-  	return;
-  }
-  if(!client){
-  	console.log("no client given");
-  	return;
-  }
-
-  importFiles('/var/dados/candidatos/', 'consulta_cand', client, copyFrom, done, function(){
-
-  	importFiles('/var/dados/bens_candidatos/', 'BEM_CANDIDATO', client, copyFrom, done)
-
-  });
-
-  //var stream = client.query(copyFrom('COPY my_table FROM STDIN'));
-  //var fileStream = fs.createReadStream('some_file.tsv')
-  //fileStream.on('error', done);
-  //fileStream.pipe(stream).on('finish', done).on('error', done);
+(function(){
 
 
-});
+	var fs = require('fs');
+	var pg = require('pg');
+	var vEnqueuer = require('venqueuer');
+	var venqueuer = new vEnqueuer();
+	var Client = pg.Client;
 
 
-function importFiles(dir, tableName, client, copyFrom, done,  next){
-	var files = walkSync(dir);
-	
-	var remaining = files.length;
+	var client = new Client({user: 'postgres', database: 'eleicoes'});
 
-	var busy = false;
-	var queue = [];
-
-	function CopyRequest(f){
-		this.exec = function(){
-			
-			var stream = client.query(copyFrom('COPY '+tableName+' FROM STDIN ' + "WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'" )  );
-			
-			var fileStream = fs.createReadStream(f);
-			fileStream.on('error', error);
-			fileStream.pipe(stream).on('finish', complete).on('error', error);
-			busy = true;
-			
-			function error(e){
-				console.log("error on importing file " + f + " to table " + tableName);
-				console.log(e.where);
-				busy = false;
-				remaining--;
-				queue.pop().exec();
-			}
-
-			function complete(){
-				console.log("success on importing file " + f + " to table " + tableName);
-				remaining--;
-				busy = false;
-				if(queue.length === 0){
-					console.log("fila tem 0 arquivos!");
-					
-					if(remaining === 0){
-						console.log("importando proximo lote de arquivos");
-						if(next){
-							next();
-						}
-					}
-					
-				}
-				else{
-					queue.pop().exec();
-				}
-			}
-		};
-	}
-
-	files.forEach(function(f){
+	client.connect(function(err, client, done) {
 		
-		if(!validate(f)){
-			remaining--;
+		if(err){
+			console.log("connection error", err);
 			return;
 		}
-		
-		var copyReq = new CopyRequest(f);
-		if(!busy){
-			copyReq.exec();
+		if(!client){
+			console.log("no client given");
+			return;
 		}
-		else{
-			queue.push(copyReq);
+
+		function import(){
+
+			venqueuer.createQueue("importer", function(){
+				console.log("terminou de importar dados no postgres");
+			});
+
+			var folders = getTopSubFolders('./downloader');
+			var files;
+			var file;
+			var folder;
+
+			for (folder in folders){
+
+				files = getAllFilesUnderFolder(folder.path);
+				
+				for(file in files){
+					if(isValidFile(file)){
+						queueUpImportTask(file, folder.folderName);
+					}
+				}
+			}
+
+
+			venqueuer.trigger('importer');
+
+			
+			function isValidFile(f){
+				if( f.indexOf(".pdf") !== -1 )
+					return false;
+				if( f.indexOf("leio") !== -1 )
+					return false;
+				if( f.indexOf("leia") !== -1 )
+					return false;
+				if( f.indexOf("layout") !== -1 )
+					return false;
+				if( f.indexOf(".zip") !== -1 )
+					return false;
+				
+				return true;
+			}
+
+			function queueUpImportTask(file, folder){
+				venqueuer.enqueue("importer", importCSVFile, {
+
+					filePath: file, 
+					tableName: folder, 
+					pgClient: client,
+					callback: function(e){
+						if(e){
+							console.log("OCORREU ERRO AO IMPORTAR");
+							console.log(e.where);
+						}
+						console.log("terminou de importar arquivo: " +  path );
+					}
+
+				});
+			}
+
+
+
 		}
 
 	});
 
 
-	function validate(f){
-		if( f.indexOf(".pdf") !== -1 )
-			return false;
-		if( f.indexOf("leio") !== -1 )
-			return false;
-		if( f.indexOf("leia") !== -1 )
-			return false;
-		if( f.indexOf("layout") !== -1 )
-			return false;
-		if( f.indexOf(".zip") !== -1 )
-			return false;
+	function importCSVFile(filePath, tableName, pgClient, callback){
+
+		var files = walkSync(dir);
+		var copyFrom = require('pg-copy-streams').from;
+
+		var stream = pgClient.query(copyFrom('COPY '+tableName+' FROM STDIN ' + "WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'" )  );
+		var fileStream = fs.createReadStream(filePath);
+		fileStream.on('error', error);
+		fileStream.pipe(stream).on('finish', complete).on('error', error);
 		
-		return true;
+		function error(e){
+			callback(e);
+		}
+
+		function complete(){
+			callback();
+		}
+
 	}
 
-}
+
+	function getAllFilesUnderFolder(dir, filelist) {
+		var fs = fs || require('fs'),
+		files = fs.readdirSync(dir);
+		filelist = filelist || [];
+		files.forEach(function(file) {
+			if (fs.statSync(dir + '/' + file).isDirectory()) {
+				filelist = getAllFilesUnderFolder(dir + file + '/', filelist);
+			}
+			else {
+				filelist.push(dir+file);
+			}
+		});
+		return filelist;
+	};
+
+	function getTopSubFolders(dir){
+		var folderList = [];
+		var folders = fs.readdirSync(dir);
+		var f;
+		for(f in folders){
+			if( fs.statSync(dir + "/" + f).isDirectory() ){
+				folderList.push({ 
+					path: dir + "/" + f, 
+					folderName: f; 
+				});
+			}
+		}
+		return folderList;
+	}
 
 
-/*var list = walkSync('/home/vmvini/Dropbox/ADS/SEXTO_PERIODO/POS/projetos/projeto1/dados/');
-list.forEach(function(l){
-	console.log(l);
-});*/
-
-
-function walkSync(dir, filelist) {
-  var fs = fs || require('fs'),
-      files = fs.readdirSync(dir);
-  filelist = filelist || [];
-  files.forEach(function(file) {
-    if (fs.statSync(dir + '/' + file).isDirectory()) {
-		filelist = walkSync(dir + file + '/', filelist);
-    }
-    else {
-      filelist.push(dir+file);
-    }
-  });
-  return filelist;
-};
-
-/*
-
-#IMPORTÃÇÃO DE CONSULTA_CAND
-
-\COPY consulta_cand FROM '/var/dados/candidatos/2002/consulta_cand_2002_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY consulta_cand FROM '/var/dados/candidatos/2004/consulta_cand_2004_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY consulta_cand FROM '/var/dados/candidatos/2006/consulta_cand_2006_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY consulta_cand FROM '/var/dados/candidatos/2008/consulta_cand_2008_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY consulta_cand FROM '/var/dados/candidatos/2010/consulta_cand_2010_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY consulta_cand FROM '/var/dados/candidatos/2012/consulta_cand_2012_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-
-
-#IMPORTAÇÃO DE BEM_CANDIDATO
-\COPY BEM_CANDIDATO FROM '/var/dados/bens_candidatos/2006/bem_candidato_2006_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY BEM_CANDIDATO FROM '/var/dados/bens_candidatos/2008/bem_candidato_2008_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY BEM_CANDIDATO FROM '/var/dados/bens_candidatos/2010/bem_candidato_2010_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY BEM_CANDIDATO FROM '/var/dados/bens_candidatos/2012/bem_candidato_2012_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-\COPY BEM_CANDIDATO FROM '/var/dados/bens_candidatos/2014/bem_candidato_2014_AC.txt' WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'
-
-
-
-*/
+})();
