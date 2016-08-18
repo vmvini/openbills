@@ -39,6 +39,6 @@ WORKDIR /usr/src/app
 
 #CMD ["npm","start"]
 
-COPY /node-csv-importer/* /usr/src/app/
+ADD /node-csv-importer/ /usr/src/app/
 RUN cd /usr/src/app
 RUN npm install  
