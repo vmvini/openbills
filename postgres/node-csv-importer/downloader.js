@@ -19,7 +19,7 @@
 		console.log("extração dos arquivos zipados acabou!");
 
 		console.log("enviar para postgres");
-		require('./importer');
+		require('./importer')();
 
 	});
 
