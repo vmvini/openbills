@@ -2,6 +2,8 @@
 module.exports = function(){
 
 
+	
+
 	var fs = require('fs');
 	var pg = require('pg');
 	var vEnqueuer = require('venqueuer');
@@ -22,10 +24,10 @@ module.exports = function(){
 			return;
 		}
 
-		import();
+		importAllCSVs();
 
-		function import(){
-
+		function importAllCSVs(){
+			
 			venqueuer.createQueue("importer", function(){
 				console.log("terminou de importar dados no postgres");
 			});
@@ -37,11 +39,11 @@ module.exports = function(){
 
 			for (folder in folders){
 
-				files = getAllFilesUnderFolder(folder.path);
+				files = getAllFilesUnderFolder(folders[folder].path);
 
 				for(file in files){
-					if(isValidFile(file)){
-						queueUpImportTask(file, folder.folderName);
+					if( isValidFile( files[file] ) ){
+						queueUpImportTask( files[file], folders[folder].folderName);
 					}
 				}
 			}
@@ -51,6 +53,7 @@ module.exports = function(){
 
 
 			function isValidFile(f){
+				
 				if( f.indexOf(".pdf") !== -1 )
 					return false;
 				if( f.indexOf("leio") !== -1 )
@@ -66,6 +69,7 @@ module.exports = function(){
 			}
 
 			function queueUpImportTask(file, folder){
+				
 				venqueuer.enqueue("importer", importCSVFile, {
 
 					filePath: file, 
@@ -74,9 +78,10 @@ module.exports = function(){
 					callback: function(e){
 						if(e){
 							console.log("OCORREU ERRO AO IMPORTAR");
-							console.log(e.where);
+							console.log(e);
+							return;
 						}
-						console.log("terminou de importar arquivo: " +  path );
+						console.log("terminou de importar arquivo: " +  file );
 					}
 
 				});
@@ -90,8 +95,8 @@ module.exports = function(){
 
 
 	function importCSVFile(filePath, tableName, pgClient, callback){
+		
 
-		var files = walkSync(dir);
 		var copyFrom = require('pg-copy-streams').from;
 
 		var stream = pgClient.query(copyFrom('COPY '+tableName+' FROM STDIN ' + "WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'" )  );
@@ -111,29 +116,32 @@ module.exports = function(){
 
 
 	function getAllFilesUnderFolder(dir, filelist) {
+		
 		var fs = fs || require('fs'),
 		files = fs.readdirSync(dir);
 		filelist = filelist || [];
 		files.forEach(function(file) {
 			if (fs.statSync(dir + '/' + file).isDirectory()) {
-				filelist = getAllFilesUnderFolder(dir + file + '/', filelist);
+				filelist = getAllFilesUnderFolder(dir + "/" + file + '/', filelist);
 			}
 			else {
-				filelist.push(dir+file);
+				filelist.push(dir+"/"+file);
 			}
 		});
 		return filelist;
 	};
 
 	function getTopSubFolders(dir){
+	
 		var folderList = [];
 		var folders = fs.readdirSync(dir);
 		var f;
 		for(f in folders){
-			if( fs.statSync(dir + "/" + f).isDirectory() ){
+
+			if( fs.statSync(dir + "/" + folders[f]).isDirectory() ){
 				folderList.push({ 
-					path: dir + "/" + f, 
-					folderName: f; 
+					path: dir + "/" + folders[f], 
+					folderName: folders[f]
 				});
 			}
 		}
