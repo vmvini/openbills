@@ -1,9 +1,12 @@
-#Construir imagem
-sudo docker build -t pg-eleicoes .
+1- Na pasta postgres_alpine, construa a imagem do postgres com o comando:
+sudo docker build -t pg-alpine-eleicoes .
 
-#Executar imagem criada
-#irá baixar todos os arquivos e inserir no postgres e em seguida abrir o psql
-sudo docker run -it pg-eleicoes
+2- Na pasta node-csv-importer, faça:
+	a) docker-compose build
+	b) docker-compose up
+
+Os comandos acima irão baixar e enviar os dados do governo para o postgres.
+
 
 
 
