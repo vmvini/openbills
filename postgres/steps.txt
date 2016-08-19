@@ -1,28 +1,19 @@
 #Construir imagem
 sudo docker build -t pg-eleicoes .
 
-#rExecutar imagem criada
-sudo docker run -it -d -v SUA_PASTA_LOCAL_DE_DADOS:/var/dados pg-eleicoes
-#exemplo:
-sudo docker run -it -d -v /home/vmvini/Dropbox/ADS/SEXTO_PERIODO/POS/projetos/projeto1/dados:/var/dados pg-eleicoes
+#Executar imagem criada
+#irá baixar todos os arquivos e inserir no postgres e em seguida abrir o psql
+sudo docker run -it pg-eleicoes
 
 
+
+-------------------------COMANDOS NÃO NECESSÁRIOS-------------------------------------- 
 #Usar o "terminal" da imagem criada:
 sudo docker exec -it CODIGO_DO_CONTAINER_EM_EXECUCAO /bin/bash
-
-#importe os arquivos csv para as tabelas do banco com o comando:
-node importer.js
-
 
 #Para visualizar o banco com os novos dados:
 #selecionar banco
 psql -U postgres eleicoes
-
-#Com esse bash do psql, é possível fazer qualquer coisa que vc faria com a ferramenta pgAdmin.
-
-
-
-
 
 
 #----COMANDOS UTILITÁRIOS-------------

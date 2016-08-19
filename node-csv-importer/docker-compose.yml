@@ -1,0 +1,10 @@
+version: '2'
+services:
+  node-csv-importer:
+    build: .
+    depends_on:
+     - pg-alpine-eleicoes
+  pg-alpine-eleicoes:
+    image: pg-alpine-eleicoes
+    ports:
+      - "2345:5432" # Bind host port 5432 to PostgreSQL port 5432
