@@ -1,11 +1,11 @@
-1- Na pasta postgres_alpine, construa a imagem do postgres com o comando:
-sudo docker build -t pg-alpine-eleicoes .
+1- Na pasta openbills está o serviço soap em java, compile-o:
+	mvn clean install
 
-2- Na pasta node-csv-importer, faça:
+2- Na pasta raiz onde o arquivo docker-compose.yml está, faça:
 	a) docker-compose build
 	b) docker-compose up
 
-Os comandos acima irão baixar e enviar os dados do governo para o postgres.
+Os comandos acima irão baixar e enviar os dados do governo para o postgres e executar o servidor payara com o serviço soap
 
 
 

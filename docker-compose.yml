@@ -1,0 +1,27 @@
+version: '2'
+services:
+  
+  openbills-soap:
+    build:
+      context: ./openbills/
+      dockerfile: ./Dockerfile
+    ports:
+      - "99:8080"
+    depends_on:
+      - node-csv-importer
+  
+  
+  node-csv-importer:
+    build:
+      context: ./node-csv-importer/
+      dockerfile: ./Dockerfile
+    depends_on:
+     - pg-alpine-eleicoes
+  
+
+  pg-alpine-eleicoes:
+    build:
+      context: ./postgres_alpine
+      dockerfile: ./Dockerfile
+    ports:
+      - "2345:5432" # Bind host port 5432 to PostgreSQL port 5432
