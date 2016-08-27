@@ -23,6 +23,17 @@ public class Repository {
     @PersistenceContext
     private EntityManager em;
     
+    /*
+    private String anoEleicao;
+ 
+    private double valorBem;
+    
+    @Id
+    private String cpfCandidato;
+    
+    private String nomeCandidato;
+    */
+    
     public List<CandidatoValorBem> getCandidatoValorBem(String cpf){
         String sql = "select distinct b.ANO_ELEICAO anoEleicao,"
                 +" c.CPF_CANDIDATO cpfCandidato, c.NOME_CANDIDATO nomeCandidato, "
@@ -31,11 +42,17 @@ public class Repository {
                 +"c.SEQUENCIAL_CANDIDATO = b.SQ_CANDIDATO "
                 +"group by b.ANO_ELEICAO, c.CPF_CANDIDATO, c.NOME_CANDIDATO order by b.ANO_ELEICAO asc";
         
+        System.out.println("REPOSITORY lendo cpf: " + cpf );
         
         Query query = em.createNativeQuery(sql, "CandidatoValorBemMapping");
+        
+        System.out.println("CRIOU QUERY");
+        
         query.setParameter(1, cpf);
-        List<CandidatoValorBem> results = query.getResultList();
-        return results;
+        
+        System.out.println("SETOU PARAMETRO");
+        
+        return query.getResultList();
     }
     
     

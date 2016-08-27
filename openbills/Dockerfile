@@ -1,35 +1,30 @@
-FROM java:8-jdk-alpine
+# Glassfish 4.1 with JDK 8 Docker image
+# Based on: https://github.com/aws/aws-eb-glassfish-dockerfiles/blob/aafcfc5e812dfb9b998105d3ca9da1b7f10664e1/4.0-jdk7/Dockerfile
 
-ENV PAYARA_PKG https://s3-eu-west-1.amazonaws.com/payara.co/payara-micro-prerelease.jar
-ENV PKG_FILE_NAME payara-micro.jar
-ENV PAYARA_PATH /opt/payara
+FROM        java:8-jdk
 
-RUN   apk update \                                                                                                                                                                                                                        
- &&   apk add ca-certificates wget \                                                                                                                                                                                                      
- &&   update-ca-certificates  \
+MAINTAINER  Almir Dzinovic <almirdzin@gmail.com>
 
- && apk add sudo
+ENV         JAVA_HOME         /usr/lib/jvm/java-8-openjdk-amd64
+ENV         GLASSFISH_HOME    /usr/glassfish4
+ENV         PATH              $PATH:$JAVA_HOME/bin:$GLASSFISH_HOME/bin
 
+RUN         apt-get update && \
+            apt-get install -y curl unzip zip inotify-tools && \
+            rm -rf /var/lib/apt/lists/*
 
-RUN echo "http://dl-4.alpinelinux.org/alpine/edge/main" | sudo tee -a /etc/apk/repositories; \
-    echo "http://dl-4.alpinelinux.org/alpine/edge/community" | sudo tee -a /etc/apk/repositories
-
-RUN adduser -D default;                                               \
-    chgrp -R default /usr/local;                                      \
-    find /usr/local -type d | xargs chmod g+w;                        \
-    echo "default ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/default; \
-    chmod 0440 /etc/sudoers.d/default
+RUN         curl -L -o /tmp/glassfish4.zip http://download.java.net/glassfish/4.1.1/release/glassfish-4.1.1.zip && \
+            unzip /tmp/glassfish4.zip -d /usr && \
+            rm -f /tmp/glassfish4.zip && \
+            find /usr/glassfish4/glassfish/ -name "*.bat" -exec rm -f {} \;
 
 
-USER    default
-WORKDIR $PAYARA_PATH
 
-# Default payara ports to expose
-EXPOSE 4848 8009 8080 8181
+EXPOSE      8080
 
+WORKDIR     /usr/glassfish4
 
-RUN sudo wget -O $PAYARA_PATH/$PKG_FILE_NAME $PAYARA_PKG
+ADD target/openbills.war $WORKDIR
+ADD target/openbills/WEB-INF/lib/ /usr/glassfish4/glassfish/lib/
 
-ADD target/openbills.war  ${PAYARA_PATH}
-
-ENTRYPOINT sudo java -jar payara-micro.jar --deploy openbills.war
+CMD asadmin start-domain && asadmin deploy openbills.war  && tail -f /dev/null
