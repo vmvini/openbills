@@ -4,6 +4,7 @@
   "description": "",
   "main": "importer.js",
   "dependencies": {
+    "mongoose": "^4.5.10",
     "pg": "^6.1.0",
     "pg-copy-streams": "^1.1.1",
     "unzip": "^0.1.11",

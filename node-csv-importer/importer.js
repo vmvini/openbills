@@ -33,6 +33,9 @@ module.exports = function(){
 			
 			venqueuer.createQueue("importer", function(){
 				console.log("terminou de importar dados no postgres");
+
+				console.log("enviar politicos para mongodb");
+				require('./mongo-importer/politicosFromPG');
 			});
 
 			var folders = getTopSubFolders('./downloads');
