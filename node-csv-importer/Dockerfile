@@ -2,38 +2,30 @@ FROM mhart/alpine-node-auto
 
 # Create app directory
 RUN mkdir -p /usr/src/app
+RUN mkdir -p /usr/src/app/cache
 WORKDIR /usr/src/app
+
+#onde seus arquivos baixados ficarão
+VOLUME /usr/src/app/cache
 
 # Install app dependencies
 ADD ./ /usr/src/app/
 RUN npm install
 
-#Install Netcat
-RUN apk add --update netcat-openbsd && rm -rf /var/cache/apk/*
 
-#CMD [ "node", "downloader.js" ]
+RUN apk update
 
+RUN apk add unrar
 
-#install bash
-RUN apk add --update bash && rm -rf /var/cache/apk/*
+#RUN apk add netcat-openbsd sudo bash
 
-#Install sudo
-RUN   apk update \                                                                                                                                                                                                                        
- &&   apk add ca-certificates wget \                                                                                                                                                                                                      
- &&   update-ca-certificates  \
+#ADD start.sh /usr/src/app
 
- && apk add sudo
+#RUN sudo chmod +x /usr/src/app/start.sh
 
+VOLUME /usr/src/app/downloads
 
-RUN echo "http://dl-4.alpinelinux.org/alpine/edge/main" | sudo tee -a /etc/apk/repositories; \
-    echo "http://dl-4.alpinelinux.org/alpine/edge/community" | sudo tee -a /etc/apk/repositories
+#CMD ./start.sh
 
-
-ADD start.sh /usr/src/app
-
-RUN sudo chmod +x /usr/src/app/start.sh
-
-
-CMD ./start.sh
-
+CMD node dataSourceReader.js
 

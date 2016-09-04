@@ -4,11 +4,12 @@
   "description": "",
   "main": "importer.js",
   "dependencies": {
+    "extract-zip": "^1.5.0",
     "mongoose": "^4.5.10",
     "pg": "^6.1.0",
     "pg-copy-streams": "^1.1.1",
-    "unzip": "^0.1.11",
-    "venqueuer": "^1.0.0"
+    "unzip2": "^0.2.5",
+    "venqueuer": "^1.0.1"
   },
   "devDependencies": {},
   "scripts": {

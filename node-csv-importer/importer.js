@@ -1,5 +1,5 @@
 //node-csv-importer
-module.exports = function(){
+module.exports = function(importMapping){
 
 
 	
@@ -35,20 +35,23 @@ module.exports = function(){
 				console.log("terminou de importar dados no postgres");
 
 				console.log("enviar politicos para mongodb");
-				require('./mongo-importer/politicosFromPG');
+				//require('./mongo-importer/politicosFromPG');
 			});
 
 			var folders = getTopSubFolders('./downloads');
 			var files;
 			var file;
 			var folder;
+			var validator;
 
 			for (folder in folders){
-
+				
+				validator = createValidator(importMapping, folders[folder].path + "/" );
+				
 				files = getAllFilesUnderFolder(folders[folder].path);
 
 				for(file in files){
-					if( isValidFile( files[file] ) ){
+					if( validator( files[file] ) ){
 						queueUpImportTask( files[file], folders[folder].folderName);
 					}
 				}
@@ -58,21 +61,56 @@ module.exports = function(){
 			venqueuer.trigger('importer');
 
 
-			function isValidFile(f){
-				
-				if( f.indexOf(".pdf") !== -1 )
-					return false;
-				if( f.indexOf("leio") !== -1 )
-					return false;
-				if( f.indexOf("leia") !== -1 )
-					return false;
-				if( f.indexOf("layout") !== -1 )
-					return false;
-				if( f.indexOf(".zip") !== -1 )
-					return false;
+			function createValidator(importMapping, folder){
+				console.log("importMapping", importMapping);
+				console.log("foldername: '"+folder+"'");
+				var allowedFiles = importMapping[folder];
+				var i;
+				var isValid;
 
-				return true;
+				if(importMapping){
+					if( allowedFiles !== undefined){
+						
+						return function(f){
+							console.log("VERIFICANDO SE ARQUIVO É VALIDO!");
+							isValid = false;
+							//se o arquivo nao possuir um dos nomes listados, entao nao é válido
+							for( i in allowedFiles ){
+								//se f é um arquivo q possui nome allowedFiles[i], então é válido
+								if(f.indexOf( allowedFiles[i] ) !== -1){
+									isValid = true;
+								}
+							}
+
+							return isValid;
+
+						};
+
+					}
+				}
+				
+				return isValidFile;
+				
+
+				function isValidFile(f){
+				
+					if( f.indexOf(".pdf") !== -1 )
+						return false;
+					if( f.indexOf("leio") !== -1 )
+						return false;
+					if( f.indexOf("leia") !== -1 )
+						return false;
+					if( f.indexOf("layout") !== -1 )
+						return false;
+					if( f.indexOf(".zip") !== -1 )
+						return false;
+
+					return true;
+				}
+
 			}
+
+			
 
 			function queueUpImportTask(file, folder){
 				

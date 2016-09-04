@@ -55,7 +55,7 @@ function printSQL(arr){
 
 	arr.forEach(function(a){
 
-		console.log("\t"+a+" varchar(50),");
+		console.log("\t"+a+" varchar(200),");
 
 
 	});

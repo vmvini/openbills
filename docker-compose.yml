@@ -17,6 +17,9 @@ services:
       dockerfile: ./Dockerfile
     depends_on:
      - pg-alpine-eleicoes
+    volumes:
+      - ./cache/:/usr/src/app/cache
+      - ./temp/:/usr/src/app/downloads
   
 
   pg-alpine-eleicoes:
