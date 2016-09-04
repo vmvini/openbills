@@ -147,16 +147,13 @@ function startImporting(importMapping, client){
 
 		var stream = pgClient.query(copyFrom('COPY '+tableName+' FROM STDIN ' + "WITH DELIMITER ';' CSV HEADER ENCODING 'ISO 8859-1'" )  );
 		var fileStream = fs.createReadStream(filePath);
-		fileStream.on('error', error);
-		fileStream.pipe(stream).on('finish', complete).on('error', error);
+		//fileStream.on('error', error);
+		fileStream.pipe(stream).on('end', callback).on('error', error);
 
 		function error(e){
 			callback(e);
 		}
-
-		function complete(){
-			callback();
-		}
+		
 
 	}
 
