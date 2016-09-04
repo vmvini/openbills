@@ -1,23 +1,26 @@
 //node-csv-importer
+
 module.exports = function(importMapping){
 
+	waitForPg( function(client){
 
+		startImporting(importMapping, client);
+
+	} );
+
+};
+
+function startImporting(importMapping, client){
 	
-
 	var fs = require('fs');
 	var pg = require('pg');
 	var vEnqueuer = require('venqueuer');
 	var venqueuer = new vEnqueuer();
-	var Client = pg.Client;
+	start(client);
 
+	function start(client){
 
-	//var client = new Client({user: 'postgres', database: 'eleicoes'});
-	var client = new Client('postgres://postgres:12345@pg-alpine-eleicoes:5432/eleicoes');
-	
-
-	client.connect(function(err, client, done) {
-
-		if(err){
+		/*if(err){
 			console.log("erro ao conectar pg-alpine-eleicoes 5432");
 			console.log("connection error", err);
 			return;
@@ -25,7 +28,7 @@ module.exports = function(importMapping){
 		if(!client){
 			console.log("no client given");
 			return;
-		}
+		}*/
 
 		importAllCSVs();
 
@@ -34,8 +37,8 @@ module.exports = function(importMapping){
 			venqueuer.createQueue("importer", function(){
 				console.log("terminou de importar dados no postgres");
 
-				console.log("enviar politicos para mongodb");
-				//require('./mongo-importer/politicosFromPG');
+				//console.log("enviar politicos para mongodb");
+				//equire('./mongo-importer/politicosFromPG');
 			});
 
 			var folders = getTopSubFolders('./downloads');
@@ -62,8 +65,8 @@ module.exports = function(importMapping){
 
 
 			function createValidator(importMapping, folder){
-				console.log("importMapping", importMapping);
-				console.log("foldername: '"+folder+"'");
+				//console.log("importMapping", importMapping);
+				//console.log("foldername: '"+folder+"'");
 				var allowedFiles = importMapping[folder];
 				var i;
 				var isValid;
@@ -72,7 +75,7 @@ module.exports = function(importMapping){
 					if( allowedFiles !== undefined){
 						
 						return function(f){
-							console.log("VERIFICANDO SE ARQUIVO É VALIDO!");
+							//console.log("VERIFICANDO SE ARQUIVO É VALIDO!");
 							isValid = false;
 							//se o arquivo nao possuir um dos nomes listados, entao nao é válido
 							for( i in allowedFiles ){
@@ -121,8 +124,7 @@ module.exports = function(importMapping){
 					pgClient: client,
 					callback: function(e){
 						if(e){
-							console.log("OCORREU ERRO AO IMPORTAR");
-							console.log(e);
+							console.log("OCORREU ERRO AO IMPORTAR ", file);
 							return;
 						}
 						console.log("terminou de importar arquivo: " +  file );
@@ -135,7 +137,7 @@ module.exports = function(importMapping){
 
 		}
 
-	});
+	}
 
 
 	function importCSVFile(filePath, tableName, pgClient, callback){
@@ -173,7 +175,7 @@ module.exports = function(importMapping){
 			}
 		});
 		return filelist;
-	};
+	}
 
 	function getTopSubFolders(dir){
 	
@@ -192,5 +194,37 @@ module.exports = function(importMapping){
 		return folderList;
 	}
 
+	
 
-};
+
+}
+
+
+function waitForPg(connected){
+
+	//pg-alpine-eleicoes 5432
+
+	var pg = require('pg');
+	var Client = pg.Client;
+
+	//var client = new Client({user: 'postgres', database: 'eleicoes'});
+	var client = new Client('postgres://postgres:12345@pg-alpine-eleicoes:5432/eleicoes');
+	
+
+	client.connect(function(err, clientCon, done) {
+
+		if(err){
+			console.log("tentar conectar ao pg novamente");
+			waitForPg(connected);
+		}
+		else if(!clientCon){
+			console.log("tentar conectar ao pg novamente");
+			waitForPg(connected);
+		}
+		else{
+			console.log("sucesso ao conectar ao pg");
+			connected(clientCon);
+		}
+
+	});
+}
