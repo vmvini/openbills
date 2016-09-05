@@ -4,11 +4,19 @@
   "description": "",
   "main": "importer.js",
   "dependencies": {
+    "JSONStream": "^1.1.4",
+    "async": "^2.0.1",
+    "csv-stream": "^0.1.3",
     "extract-zip": "^1.5.0",
+    "line-input-stream": "^1.0.1",
+    "mongodb": "^2.2.9",
     "mongoose": "^4.5.10",
+    "mongoose-write-stream": "0.0.0",
     "pg": "^6.1.0",
     "pg-copy-streams": "^1.1.1",
-    "venqueuer": "^1.0.1"
+    "venqueuer": "^1.0.1",
+    "ya-csv": "^0.9.4",
+    "csv":"0.3.7"
   },
   "devDependencies": {},
   "scripts": {

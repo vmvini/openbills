@@ -37,8 +37,8 @@ function startImporting(importMapping, client){
 			venqueuer.createQueue("importer", function(){
 				console.log("terminou de importar dados no postgres");
 
-				//console.log("enviar politicos para mongodb");
-				//equire('./mongo-importer/politicosFromPG');
+				console.log("enviar politicos para mongodb");
+				require('./mongo-importer/politicosFromPG')(client);
 			});
 
 			var folders = getTopSubFolders('./downloads');
@@ -153,7 +153,7 @@ function startImporting(importMapping, client){
 		function error(e){
 			callback(e);
 		}
-		
+
 
 	}
 
