@@ -2,6 +2,7 @@
 
 	var mongoose = require('mongoose');
 
+	//Político
 	var politicoSchema = new mongoose.Schema({
 
 		nome: String,
@@ -19,6 +20,19 @@
 
 
 	mongoose.model('Politico', politicoSchema);
+
+
+
+	//Doador
+	var doadorSchema = new mongoose.Schema({
+
+		nome:String,
+		cpf:String,
+		financiados:[politicoSchema]
+
+	});
+
+	mongoose.model('Doador', doadorSchema);
 
 
 

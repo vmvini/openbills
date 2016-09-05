@@ -115,6 +115,6 @@ create table if not exists RECEITA_CAND_2010(
 	VR_RECEITA varchar(200),
 	TP_RECURSO varchar(200),
 	FONTE_RECURSO varchar(200),
-	DS_ESP_RECURSO varchar(200),
-	DS_RECEITA varchar(200)
+	DS_ESP_RECURSO text,
+	DS_RECEITA text
 );

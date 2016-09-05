@@ -23,19 +23,19 @@ module.exports = function(client){
 
 	generateCSVPoliticos(client);
 
-
+	//require('./doadoresFromPG')(client);
 
 
 	function generateCSVPoliticos(client){
 		//Copy (Select * From foo) To '/tmp/test.csv' With CSV DELIMITER ',';
-		var wstream = fs.createWriteStream('./cache/extracao/politicos.csv', {flags:'w'});
+		var wstream = fs.createWriteStream('./cache/extracao/politicos.json', {flags:'w'});
 
-		var stream = client.query(copyTo('COPY (select CPF_CANDIDATO cpf, NOME_CANDIDATO nome, DATA_NASCIMENTO nascimento, NUM_TITULO_ELEITORAL_CANDIDATO  titulo_eleitor, DESCRICAO_SEXO sexo, DESCRICAO_GRAU_INSTRUCAO grau_instrucao, DESCRICAO_ESTADO_CIVIL estado_civil, DESCRICAO_NACIONALIDADE nacionalidade,  SIGLA_UF_NASCIMENTO estado_nascimento,  NOME_MUNICIPIO_NASCIMENTO cidade_nascimento from CONSULTA_CAND) TO STDOUT With CSV HEADER DELIMITER \',\''));
+		var stream = client.query(copyTo('COPY ( select row_to_json(politico) from ( SELECT CPF_CANDIDATO cpf, NOME_CANDIDATO nome, DATA_NASCIMENTO nascimento, NUM_TITULO_ELEITORAL_CANDIDATO  titulo_eleitor, DESCRICAO_SEXO sexo, DESCRICAO_GRAU_INSTRUCAO grau_instrucao, DESCRICAO_ESTADO_CIVIL estado_civil, DESCRICAO_NACIONALIDADE nacionalidade,  SIGLA_UF_NASCIMENTO estado_nascimento,  NOME_MUNICIPIO_NASCIMENTO cidade_nascimento from CONSULTA_CAND) politico ) TO STDOUT'));
 	  	stream.pipe(wstream);
 	  	stream.on('end', function(){
 	  		console.log("terminou de recuperar politicos, salvo em /cache/extracao/politicos.csv");
 	  		console.log("enviar para mongo");
-	  		mongoImporter.csvImport('./cache/extracao/politicos.csv');
+	  		//mongoImporter.csvImport('./cache/extracao/politicos.csv');
 	  	});
 	  	stream.on('error', function(e){
 	  		console.log("erro", e);
@@ -43,7 +43,7 @@ module.exports = function(client){
 
 	}
 
-
+/*
 	function queryStream(client){
 		var query = new QueryStream("select CPF_CANDIDATO cpf, NOME_CANDIDATO nome, DATA_NASCIMENTO nascimento, NUM_TITULO_ELEITORAL_CANDIDATO  titulo_eleitor, DESCRICAO_SEXO sexo, DESCRICAO_GRAU_INSTRUCAO grau_instrucao, DESCRICAO_ESTADO_CIVIL estado_civil, DESCRICAO_NACIONALIDADE nacionalidade,  SIGLA_UF_NASCIMENTO estado_nascimento,  NOME_MUNICIPIO_NASCIMENTO cidade_nascimento from CONSULTA_CAND");
 		var stream = client.query(query)
@@ -53,8 +53,9 @@ module.exports = function(client){
 	  	})
 	  	stream.pipe(JSONStream.stringify()).pipe(process.stdout)
 	}
+*/
 
-
+/*
 	function start(client, sqlQuery){
 
 		
@@ -69,7 +70,7 @@ module.exports = function(client){
 	      console.log("enfileirar", row);
 
 	      //enfileirar operacao de enviar pro mongo
-	      /*venqueuer.enqueue("mongoimport", mongoImporter.savePolitico, {
+	      venqueuer.enqueue("mongoimport", mongoImporter.savePolitico, {
 	      		row:row,
 	      		callback:function(err, result){
 	      			if(err){
@@ -81,7 +82,7 @@ module.exports = function(client){
 	      			}
 	      			
 	      		}
-	      });*/
+	      });
 
 	    });
 
@@ -95,7 +96,7 @@ module.exports = function(client){
 
 	}
 
-
+*/
 
 	/*
 		

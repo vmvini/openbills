@@ -1,14 +1,14 @@
 version: '2'
 services:
   
-  openbills-soap:
-    build:
-      context: ./openbills/
-      dockerfile: ./Dockerfile
-    ports:
-      - "99:8080"
-    depends_on:
-      - node-csv-importer
+  #openbills-soap:
+  #  build:
+  #    context: ./openbills/
+  #    dockerfile: ./Dockerfile
+  #  ports:
+  #    - "99:8080"
+  #  depends_on:
+  #    - node-csv-importer
   
   
   node-csv-importer:
@@ -32,4 +32,16 @@ services:
      - mongo
 
   mongo:
-    image: mongo
+    #image: mongo
+    build:
+      context: ./mongo-container
+      dockerfile: ./Dockerfile
+    
+    #volumes_from:
+    #  - node-csv-importer
+    volumes:
+      - ./cache/:/usr/src/app/cache
+      - ./temp/:/usr/src/app/downloads
+
+    ports:
+      - "270:27017"
