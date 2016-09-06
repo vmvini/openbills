@@ -1,5 +1,8 @@
 (function(){
 
+	require('./neo4j-importer/ReadDataFromMongo');
+
+	/*
 	var fs = require('fs');
 
 	var dataSourceObjectCollection = new DSObjectCollection();
@@ -131,5 +134,5 @@
 	}
 
 
-
+*/
 })();

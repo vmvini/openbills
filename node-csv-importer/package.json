@@ -14,6 +14,7 @@
     "mongodb": "^2.2.9",
     "mongoose": "^4.5.10",
     "mongoose-write-stream": "0.0.0",
+    "node-neo4j": "^2.0.3",
     "pg": "^6.1.0",
     "pg-copy-streams": "^1.1.1",
     "venqueuer": "^1.0.1",

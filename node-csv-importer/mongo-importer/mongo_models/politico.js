@@ -5,16 +5,16 @@
 	//Político
 	var politicoSchema = new mongoose.Schema({
 
-		nome: String,
-		nascimento: String,
-		titulo_eleitor: String,
-		sexo: String,
-		grau_instrucao:String,
-		estado_civil:String,
-		nacionalidade:String,
-		estado_nascimento:String,
-		cidade_nascimento:String,
-		cpf:String
+		cpf_candidato: String,
+		nome_candidato: String,
+		data_nascimento: String,
+		descricao_sexo: String,
+		descricao_grau_instrucao: String, 
+		descricao_estado_civil: String, 
+		descricao_nacionalidade: String, 
+		sigla_uf_nascimento: String, 
+		nome_municipio_nascimento:String
+
 
 	});
 
@@ -26,9 +26,22 @@
 	//Doador
 	var doadorSchema = new mongoose.Schema({
 
-		nome:String,
+
 		cpf:String,
-		financiados:[politicoSchema]
+		nome:String,
+		dps:[{
+
+			cpf_candidato: String,
+			nome_candidato: String,
+			data_nascimento: String,
+			descricao_sexo: String,
+			descricao_grau_instrucao: String, 
+			descricao_estado_civil: String, 
+			descricao_nacionalidade: String, 
+			sigla_uf_nascimento: String, 
+			nome_municipio_nascimento:String
+
+		}]
 
 	});
 
@@ -38,3 +51,11 @@
 
 })();
 
+
+/*
+, , , , , , , ,   FROM (select * from ( select *, row_number() over (partition by cpf_candidato order by nome_candidato) as row_number from CONSULTA_CAND ) as rows where row_number = 1) dp;
+
+
+doador:
+doador.cpf, doador.nome,
+*/

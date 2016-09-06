@@ -27,6 +27,4 @@ VOLUME /usr/src/app/cache
 ADD ./ /usr/src/app/
 RUN npm install
 
-EXPOSE 27017
-
 CMD mongod & node fileListener.js && tail -f /dev/null
