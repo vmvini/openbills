@@ -1,3 +1,10 @@
 CONSULTA_CAND
 http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2010.zip
 
+RECEITA_CAND_2010
+(ReceitasCandidatos)
+http://agencia.tse.jus.br/estatistica/sead/odsele/prestacao_contas/prestacao_contas_2010.zip
+
+DESPESA_CAND_2010
+(DespesasCandidatos)
+http://agencia.tse.jus.br/estatistica/sead/odsele/prestacao_contas/prestacao_contas_2010.zip

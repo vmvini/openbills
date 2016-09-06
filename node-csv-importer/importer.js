@@ -34,7 +34,7 @@ function startImporting(importMapping, client){
 
 		function importAllCSVs(){
 			
-			var max = 500;
+			var max = 3;
 			var importCount = 0;
 
 			venqueuer.createQueue("importer", function(){
@@ -57,7 +57,7 @@ function startImporting(importMapping, client){
 				files = getAllFilesUnderFolder(folders[folder].path);
 
 				for(file in files){
-					if( validator( files[file] ) && ++importCount < 500 ){
+					if( validator( files[file] ) && ++importCount < max ){
 						queueUpImportTask( files[file], folders[folder].folderName);
 					}
 				}
@@ -214,12 +214,21 @@ function waitForPg(connected){
 	client.connect(function(err, clientCon, done) {
 
 		if(err){
-			console.log("tentar conectar ao pg novamente");
-			waitForPg(connected);
+			console.log("tentar conectar ao pg novamente em 3 segundos");
+			
+			setTimeout(function(){
+			  	
+				waitForPg(connected);
+
+			}, 3000);
 		}
 		else if(!clientCon){
-			console.log("tentar conectar ao pg novamente");
-			waitForPg(connected);
+			console.log("tentar conectar ao pg novamente em 3 segundos");
+			setTimeout(function(){
+			  	
+				waitForPg(connected);
+
+			}, 3000);
 		}
 		else{
 			console.log("sucesso ao conectar ao pg");

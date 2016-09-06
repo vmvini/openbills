@@ -31,3 +31,8 @@ file fileName.csv
 
 #TROCAR VIRGULA POR PONTO NOS NUMEROS
 sed s/','/'.'/g ReceitaCandidato.csv > ReceitaCandidatoDecimalPointFix.csv
+
+#REMOVER NEW LINE
+sed ':a;N;$!ba;s/\n/ /g'
+#OR
+tr -d '\n' < input.txt > output.txt

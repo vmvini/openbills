@@ -15,9 +15,12 @@
 			console.log("terminou de importar politicos para o mongodb");
 		});
 	});
-	
+
 	fileManager.addListener('./cache/extracao/doadores.json', function(){
 		console.log("doadores.json esta pronto");
+		require('./mongoImporter')('./cache/extracao/doadores.json', 'doadores', function(){
+			console.log("terminou de importar politicos para o mongodb");
+		});
 	});
 
 	fileManager.waitFiles();
