@@ -1,0 +1,6 @@
+#pegar todos os financiadores de um politico
+MATCH (a:Doador)-[r]->(b:Politico), (d:Doador)-[r2]->(b) WHERE d.cpf <>  a.cpf  RETURN a, b, d  LIMIT 20;
+
+
+#pegar rede de financiadores
+MATCH (a:Doador)-[r]->(b:Politico), (a)-[r2]->(c:Politico) WHERE c.cpf_candidato <> b.cpf_candidato   RETURN a, b, c  LIMIT 40;

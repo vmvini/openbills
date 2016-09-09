@@ -211,12 +211,16 @@ venqueuer.createQueue("checkdoadores", function(){
 
 function enqueueRelationsInsert(doador){
 
-	if(doador.dps === null){
-		console.log("doador q nao possui agregado");
-		console.log(doador);
+	if(doador === null){
+		console.log("doador nulo");
 
 	}
 	else{
+
+		if(!doador.dps){
+			console.log(doador.cpf + "nao possui politicos financiados");
+			return;
+		}
 
 		doador.dps.forEach(function(politico){
 
@@ -273,6 +277,7 @@ function enqueueReadAndInsertDoador(){
 		},
 		eachResultCallback: function(err, doc){
 
+
 			if(err){
 				console.log("erro ao obter um doador");
 				console.log(err);
@@ -286,14 +291,13 @@ function enqueueReadAndInsertDoador(){
 
 					},
 					label:'Doador',
-					callback: function(err, doc){
+					callback: function(err){
 						if(err){
 							console.log("erro ao inserir doador");
 							console.log(err);
 						}
 						else{
 							console.log("sucesso ao inserir doador");
-
 							enqueueRelationsInsert(doc);
 						}
 					}

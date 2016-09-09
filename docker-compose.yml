@@ -55,6 +55,8 @@ services:
       - "7474:7474"
     environment:
       - NEO4J_AUTH=none
+    volumes:
+      - ./cache/neo4j/:/data
   
   
   neo4j-importer:
