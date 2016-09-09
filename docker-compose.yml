@@ -1,37 +1,38 @@
 version: '2'
 services:
   
-  #openbills-soap:
-  #  build:
-  #    context: ./openbills/
-  #    dockerfile: ./Dockerfile
-  #  ports:
-  #    - "99:8080"
-  #  depends_on:
-  #    - node-csv-importer
-  
+  openbills-soap:
+    build:
+      context: ./openbills/
+      dockerfile: ./Dockerfile
+    ports:
+      - "99:8080"
   
   node-csv-importer:
     build:
       context: ./node-csv-importer/
       dockerfile: ./Dockerfile
-    depends_on:
-    # - pg-alpine-eleicoes
-      - mongo
-      - neo4j
     volumes:
       - ./cache/:/usr/src/app/cache
       - ./temp/:/usr/src/app/downloads
   
 
-  #pg-alpine-eleicoes:
-  #  build:
-  #    context: ./postgres_alpine
-  #    dockerfile: ./Dockerfile
-  #  ports:
-  #    - "2345:5432" # Bind host port 5432 to PostgreSQL port 5432
-  #  depends_on:
-  #   - mongo
+  pg-alpine-eleicoes:
+    build:
+      context: ./postgres_alpine
+      dockerfile: ./Dockerfile
+    ports:
+      - "2345:5432" # Bind host port 5432 to PostgreSQL port 5432
+    depends_on:
+     - mongo
+
+  node-client:
+    build:
+      context: ./node-client
+      dockerfile: ./Dockerfile
+    ports:
+      - "80:3000"
+
 
   mongo:
     #image: mongo
@@ -54,3 +55,9 @@ services:
       - "7474:7474"
     environment:
       - NEO4J_AUTH=none
+  
+  
+  neo4j-importer:
+    build:
+      context: ./neo4j-importer
+      dockerfile: ./Dockerfile

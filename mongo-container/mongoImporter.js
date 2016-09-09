@@ -2,6 +2,8 @@
 
 module.exports = function(filePath, collection, callback){
 
+	console.log("EXECUTANDO IMPORTAÇÃO  PARA MONGO");
+
 	var child_process = require('child_process');
 	var exec = child_process.exec;
 		
@@ -18,10 +20,13 @@ module.exports = function(filePath, collection, callback){
 			//callback(stderr);
 			console.log("stderr");
 			console.log(stderr);
+			callback();
 			return;
 		}
-
-		callback();
+		else{
+			callback();
+		}
+		
 		
 
 	});

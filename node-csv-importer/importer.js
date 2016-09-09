@@ -220,7 +220,7 @@ function waitForPg(connected){
 			  	
 				waitForPg(connected);
 
-			}, 3000);
+			}, 10000);
 		}
 		else if(!clientCon){
 			console.log("tentar conectar ao pg novamente em 3 segundos");
@@ -228,7 +228,7 @@ function waitForPg(connected){
 			  	
 				waitForPg(connected);
 
-			}, 3000);
+			}, 10000);
 		}
 		else{
 			console.log("sucesso ao conectar ao pg");

@@ -1,4 +1,41 @@
+
+
 (function(){
+
+	require('./dbcon')(function(){
+		startFile();
+	});
+
+})();
+
+
+function setImportStatusOK(collection){
+
+	var mongoose = require('mongoose');
+	var CollectionStatus = mongoose.model('CollectionStatus');
+
+	var cs = new CollectionStatus({
+
+		collectionName: collection
+	});
+
+	cs.save(function(err){
+		if(err){
+			console.log("erro ao salvar status de importação de "+collection+" para mongo");
+			console.log(err);
+
+		}
+		else{
+			console.log("sucesso ao salvar status de importação de "+collection+" para mongo");
+			
+		}
+	});
+	
+}
+
+
+
+function startFile(){
 
 	var fs = require('fs');
 	var vEnqueuer = require('venqueuer');
@@ -13,13 +50,18 @@
 		//enviar para o mongo
 		require('./mongoImporter')('./cache/extracao/politicos.json', 'politicos', function(){
 			console.log("terminou de importar politicos para o mongodb");
+
+			//salvar status de importado no mongodb
+			setImportStatusOK("politicos");
 		});
 	});
 
 	fileManager.addListener('./cache/extracao/doadores.json', function(){
 		console.log("doadores.json esta pronto");
 		require('./mongoImporter')('./cache/extracao/doadores.json', 'doadores', function(){
-			console.log("terminou de importar politicos para o mongodb");
+			console.log("terminou de importar doadores para o mongodb");
+			//salvar status de importado no mongodb
+			setImportStatusOK("doadores");
 		});
 	});
 
@@ -67,12 +109,12 @@
 
 		if( !fs.existsSync(file) ){
 
-			console.log("arquivo " + file + " nao existe, esperar 3 segundos");
+			console.log("arquivo " + file + " nao existe, esperar 10 segundos");
 			setTimeout(function(){
 			  	
 				checkFile(file, callback);
 
-			}, 3000);
+			}, 10000);
 		}
 		else{
 			callback();
@@ -80,9 +122,5 @@
 
 	}
 
-	/*
-		enfileirar operação de checar se arquivo existe para todos os arquivos registrados
-	
-	*/
 
-})();
+}

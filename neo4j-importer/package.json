@@ -1,15 +1,17 @@
 {
-  "name": "mongo-container",
+  "name": "neo4j-container",
   "version": "1.0.0",
   "description": "",
-  "main": "fileListener.js",
+  "main": "CollectionChecker.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "mongodb": "^2.2.9",
     "mongoose": "^4.6.0",
+    "node-neo4j": "^2.0.3",
     "venqueuer": "^1.0.1"
   }
 }
