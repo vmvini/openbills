@@ -55,8 +55,6 @@ module.exports = function(client){
 
 		console.log("criacao de jsons acabou");
 
-		removeNewLineFromJson("./cache/extracao/doadoresTemp.json", doadoresJson);
-
 	});
 
 	var jsonFiles = [];
@@ -92,6 +90,9 @@ module.exports = function(client){
 					}
 					else{
 						console.log("sucesso ao criar " + file);
+						if(file === "./cache/extracao/doadoresTemp.json"){
+							removeNewLineFromJson("./cache/extracao/doadoresTemp.json", doadoresJson);
+						}
 					}
 				}
 			});

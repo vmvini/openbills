@@ -1,0 +1,27 @@
+{
+  "name": "sisamclient",
+  "homepage": "https://github.com/vmvini/sisamclient",
+  "authors": [
+    "Marcus Vinicius <vmvini@hotmail.com>"
+  ],
+  "description": "sisam client",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-route": "^1.5.8",
+    "angular": "^1.5.8",
+    "bootstrap-css": "^3.3.6",
+    "jquery": "1.9.x-3.x",
+    "angular-bootstrap-multiselect": "^0.4.0",
+    "moment": "^2.14.1",
+    "angucomplete-alt": "^2.4.1"
+  }
+}

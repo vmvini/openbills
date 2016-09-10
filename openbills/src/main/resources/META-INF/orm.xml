@@ -9,7 +9,7 @@
             <column name="anoEleicao" />
             <column name="cpfCandidato" />
             <column name="nomeCandidato" />
-            <column name="valorBem" class="java.lang.Double" />
+            <column name="valorBem" />
         </constructor-result>
     </sql-result-set-mapping>
     

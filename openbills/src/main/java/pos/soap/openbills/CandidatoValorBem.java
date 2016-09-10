@@ -35,13 +35,13 @@ public class CandidatoValorBem {
 
     private String anoEleicao;
 
-    private double valorBem;
+    private String valorBem;
 
     private String cpfCandidato;
 
     private String nomeCandidato;
 
-    public CandidatoValorBem(String anoEleicao, String cpfCandidato, String nomeCandidato, Double valorBem ) {
+    public CandidatoValorBem(String anoEleicao, String cpfCandidato, String nomeCandidato, String valorBem ) {
         this.anoEleicao = anoEleicao;
         this.valorBem = valorBem;
         this.cpfCandidato = cpfCandidato;
@@ -58,11 +58,11 @@ public class CandidatoValorBem {
         this.anoEleicao = anoEleicao;
     }
 
-    public double getValorBem() {
+    public String getValorBem() {
         return valorBem;
     }
 
-    public void setValorBem(double valorBem) {
+    public void setValorBem(String valorBem) {
         this.valorBem = valorBem;
     }
 

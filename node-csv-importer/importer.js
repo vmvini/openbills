@@ -34,9 +34,6 @@ function startImporting(importMapping, client){
 
 		function importAllCSVs(){
 			
-			var max = 3;
-			var importCount = 0;
-
 			venqueuer.createQueue("importer", function(){
 				console.log("terminou de importar dados no postgres");
 
@@ -57,7 +54,7 @@ function startImporting(importMapping, client){
 				files = getAllFilesUnderFolder(folders[folder].path);
 
 				for(file in files){
-					if( validator( files[file] ) && ++importCount < max ){
+					if( validator( files[file] ) ){
 						queueUpImportTask( files[file], folders[folder].folderName);
 					}
 				}

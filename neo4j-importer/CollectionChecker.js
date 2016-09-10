@@ -115,9 +115,19 @@ venqueuer.createQueue("checkdoadores", function(){
 
 
 (function(){
-
+	var fs = require('fs');
 	var mongoose = require('mongoose');
-	require('./mongoConnection')(afterConnect);
+	
+	if(!hasNeoBackup()){
+		require('./mongoConnection')(afterConnect);
+	}
+	else{
+		console.log("já possui backup do banco neo4j");
+	}
+	
+	function hasNeoBackup(){
+		return fs.existsSync('./cache/neo4j/graph.db');
+	}
 
 
 	function afterConnect(){

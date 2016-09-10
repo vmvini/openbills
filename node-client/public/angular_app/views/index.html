@@ -1,0 +1,58 @@
+<h1>{{vm.title}}</h1>
+
+
+
+
+
+<div class="container">
+
+
+		<div id="svgContainer">
+
+		</div>
+
+
+
+		<h3>Progressão da riqueza do político</h3>
+		<angucomplete-alt id="politicos"
+		              placeholder="Digite o nome de um político"
+		              pause="400"
+		              selected-object="vm.politicoSelecionado"
+		              remote-url="/api/politicos?nome="
+		              remote-url-data-field=""
+		              title-field="nome_candidato"
+		              input-class="form-control form-control-small"> </angucomplete-alt>
+
+
+		<!--              
+		<h3>Variavel Azul</h3>
+		<select ng-model="vm.bluevar" ng-change="vm.selectBlueVar()" class="form-control">
+                          <option ng-repeat="var in vm.bluevarList" value="{{var.nome_banco}}" >{{var.nome}}</option>
+                        </select> -->
+
+		<!--angucomplete-alt id="varazul"
+		              placeholder="variavel azul"
+		              pause="400"
+		              selected-object="vm.varAzulSelecionada"
+		              remote-url="/api/vardetails?="
+		              remote-url-data-field="result.getListaVariaveisDescReturn"
+		              title-field="nome, nome_banco"
+		              input-class="form-control form-control-small"> </angucomplete-alt-->
+
+		<!--
+		<h3>Variavel Vermelha</h3>
+		<select ng-model="vm.redvar" ng-change="vm.selectRedVar()" class="form-control">
+                          <option ng-repeat="var in vm.redvarList" value="{{var.nome_banco}}" >{{var.nome}}</option>
+                        </select> -->
+		<!--angucomplete-alt id="varvermelha"
+		              placeholder="variavel vermelha"
+		              pause="400"
+		              selected-object="vm.varVermelhaSelecionada"
+		              remote-url="/api/vardetails?="
+		              remote-url-data-field="result.getListaVariaveisDescReturn"
+		              title-field="nome, nome_banco"
+		              input-class="form-control form-control-small"> </angucomplete-alt--> 
+
+	
+
+</div>

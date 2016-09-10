@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 
 
 # Install app dependencies
-ADD ./sisamclient/ /usr/src/app/
+ADD . /usr/src/app/
 
 
 #RUN npm install
