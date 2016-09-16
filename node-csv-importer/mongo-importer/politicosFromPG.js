@@ -18,6 +18,8 @@ function jsonFileExists(file, exist, nexist){
 
 }
 
+
+
 function removeNewLineFromJson(input, output){
 	var child_process = require('child_process');
 	var exec = child_process.exec;
@@ -41,11 +43,42 @@ function removeNewLineFromJson(input, output){
 	});
 }
 
-
+//!fs.existsSync(file)
 
 module.exports = function(client){
 
-	 
+	var mkdirp = require('mkdirp');
+
+	if(!fs.existsSync('./cache/extracao/')){
+
+		createPath('./cache/extracao/', function(){
+
+			initMongoImport(client);
+
+		});
+
+	}
+	else{
+		initMongoImport(client);
+	}
+
+	function createPath(path, callback){
+		mkdirp(path, function (err) {
+		    if(err){
+		    	console.log("erro ao criar path");
+		    	console.log(err);
+		    }
+		    else{
+		    	callback();
+		    }
+		});
+	}
+
+}
+
+function initMongoImport(client){
+
+	
 	var copyTo = require('pg-copy-streams').to;
 	var vEnqueuer = require('venqueuer');
 	var venqueuer = new vEnqueuer();
@@ -115,5 +148,7 @@ module.exports = function(client){
 	  		callback(e);
 	  	});
 	}
+
+	
 
 }
