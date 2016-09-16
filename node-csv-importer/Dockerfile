@@ -10,7 +10,7 @@ VOLUME /usr/src/app/cache
 VOLUME /usr/src/app/downloads
 
 # Install app dependencies
-ADD ./ /usr/src/app/
+COPY . /usr/src/app/
 RUN npm install
 
 CMD node dataSourceReader.js

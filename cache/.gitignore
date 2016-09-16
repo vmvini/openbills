@@ -1,0 +1,9 @@
+#ignorar todos os arquivos
+/*
+
+#exceções 
+!.gitignore
+
+!neo4j/.folderkeeper
+!extracao/.folderkeeper
+

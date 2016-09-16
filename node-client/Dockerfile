@@ -8,10 +8,8 @@ WORKDIR /usr/src/app
 
 
 # Install app dependencies
-ADD . /usr/src/app/
-
-
-#RUN npm install
+COPY . /usr/src/app/
+RUN npm install
 
 CMD npm start
 

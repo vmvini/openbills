@@ -7,8 +7,7 @@ WORKDIR /usr/src/app
 
 VOLUME /usr/src/app/cache
 
-# Install app dependencies
-ADD ./ /usr/src/app/
+COPY . /usr/src/app/
 RUN npm install
 
 CMD node CollectionChecker.js

@@ -38,13 +38,10 @@ services:
 
 
   mongo:
-    #image: mongo
     build:
       context: ./mongo-container
       dockerfile: ./Dockerfile
     
-    #volumes_from:
-    #  - node-csv-importer
     volumes:
       - ./cache/:/usr/src/app/cache
       - ./temp/:/usr/src/app/downloads
@@ -52,19 +49,19 @@ services:
     ports:
       - "270:27017"
 
-  #neo4j:
-  #  image: thetallgrassnet/alpine-neo4j
-  #  ports:
-  #    - "7474:7474"
-  #  environment:
-  #    - NEO4J_AUTH=none
-  #  volumes:
-  #    - ./cache/neo4j/:/data
+  neo4j:
+    image: thetallgrassnet/alpine-neo4j
+    ports:
+      - "7474:7474"
+    environment:
+      - NEO4J_AUTH=none
+    volumes:
+      - ./cache/neo4j/:/data
   
   
-  #neo4j-importer:
-  #  build:
-  #    context: ./neo4j-importer
-  #    dockerfile: ./Dockerfile
-  #  volumes:
-  #    - ./cache/:/usr/src/app/cache
+  neo4j-importer:
+    build:
+      context: ./neo4j-importer
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./cache/:/usr/src/app/cache

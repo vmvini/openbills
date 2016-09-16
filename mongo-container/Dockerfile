@@ -24,7 +24,7 @@ WORKDIR /usr/src/app
 VOLUME /usr/src/app/cache
 
 # Install app dependencies
-ADD ./ /usr/src/app/
+COPY . /usr/src/app 
 RUN npm install
 
 CMD mongod & node fileListener.js && tail -f /dev/null
