@@ -10,7 +10,7 @@ router.post('/doadores', function(req, res){
 
 		 var statementsOne = {
             statements: [{
-                statement:'MATCH path = (c:Politico)<-[r3]-(a:Doador)-[r]->(b:Politico) WHERE c.cpf_candidato <> b.cpf_candidato AND b.cpf_candidato = "'+ req.body.cpf +'"   RETURN path;',
+                statement:'MATCH path = (c:Politico)<-[r3]-(a:Doador)-[r]->(b:Politico) WHERE c.cpf_candidato <> b.cpf_candidato AND b.cpf_candidato = "'+ req.body.cpf +'"   RETURN path LIMIT 40;',
                 resultDataContents:["graph"]
             }]
         };
