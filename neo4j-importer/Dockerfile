@@ -10,4 +10,4 @@ VOLUME /usr/src/app/cache
 COPY . /usr/src/app/
 RUN npm install
 
-CMD node CollectionChecker.js
+CMD node CollectionChecker.js && tail -f /dev/null

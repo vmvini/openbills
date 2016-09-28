@@ -10,14 +10,19 @@
 
 		var vm = this;
 
+		vm.cpf = "";
+
 		
 		vm.politicoSelecionado = function(d){
 			console.log("selecionou um politico", d);
+
+			vm.cpf = d.originalObject.cpf_candidato;
 			
 			PoliticoService.getValorBens(d.originalObject.cpf_candidato)
 							.success(function(data){
 								console.log("desenhar no svg");
-								var resultArr = data.result.return
+								//var resultArr = data.result.return
+								var resultArr = data.return;
 								console.log(resultArr);
 
 								barchartService.drawChart(resultArr);

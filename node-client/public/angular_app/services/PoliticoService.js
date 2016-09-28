@@ -16,9 +16,14 @@
 			return $http.post('/api/valorBens', {cpf:cpf});
 		};
 
+		var getDoadoresGraph = function(cpfCandidato){
+			return $http.post('/api/doadores', {cpf:cpfCandidato});
+		}
+
 		return {
 			getPoliticos: getPoliticos,
-			getValorBens: getValorBens
+			getValorBens: getValorBens,
+			getDoadoresGraph: getDoadoresGraph
 
 		};
 

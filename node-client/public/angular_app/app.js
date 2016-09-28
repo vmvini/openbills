@@ -11,6 +11,11 @@
 				controller:'indexCtrl',
 				controllerAs:'vm'
 			})
+			.when('/doadores/:cpf', {
+				templateUrl:'angular_app/views/doadores.html',
+				controller:'doadoresCtrl', 
+				controllerAs:'vm'
+			})
 			.otherwise({redirectTo:'/'});
 	}
 

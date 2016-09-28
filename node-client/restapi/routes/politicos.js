@@ -6,7 +6,39 @@ var mongoose = require('mongoose');
 require('../mongo/dbcon');
 var Politico = mongoose.model('Politico');
 
-router.post('/valorBens', validateParams, controller( wsdl, "getBensDeclaradosAosAnos", setArgs  ) );
+
+function getPoliticosBens(req, res){
+
+	var soap = require('soap');
+	soap.WSDL.prototype.ignoredNamespaces = [];
+
+	  var url = 'http://openbills-soap:8080/openbills/OpenBillsService?wsdl';
+	  var args = {cpf: req.body.cpf};
+	  soap.createClient(url, function(err, client) {
+	      client.getBensDeclaradosAosAnos(args, function(err, result) {
+	          if(err){
+	          	console.log("aconteceu erro", err);
+	          	res.json({err:err, msg:"erro ao acessar metodo"});
+	          	return;
+
+	          }
+	          else{
+	          	res.json(result);
+	          }
+	      });
+	  });
+
+
+}
+
+
+//router.post('/valorBens', validateParams, controller( wsdl, "getBensDeclaradosAosAnos", setArgs  ) );
+router.post('/valorBens', function(req, res){
+
+	getPoliticosBens(req, res);
+
+});
+
 
 
 router.get('/politicos', function(req, res){
